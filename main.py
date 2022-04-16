@@ -7,7 +7,7 @@ FILE_NAME = "sample.csv"
 DATE_FORMAT = "%Y/%m/%d"
 CATEGORIES = ["food", "bus", "restaurant"]
 NA = "NA"
-HEADER = ["Date","Amount","Category","Note"]
+HEADER = ["Date", "Amount", "Category", "Note"]
 
 
 def get_correct_date(raw: str) -> str:
@@ -18,20 +18,15 @@ def get_correct_date(raw: str) -> str:
     day = int(raw[6:])
     return datetime(year, month, day).strftime(DATE_FORMAT)
 
-def read(file_name: str = FILE_NAME)->list:
+
+def read(file_name: str = FILE_NAME) -> list:
     with open(file_name) as f:
         r = csv.reader(f)
         return list(r)
 
 
 def get_category(categories: list) -> str:
-    counter = 0
-    categories_dict = {}
-    categories = [i.upper() for i in categories]
-    
-    for i in categories:
-        categories_dict[counter] = i
-        counter += 1
+    categories_dict = {i:c.upper() for i,c in enumerate(categories)}
 
     print(f"Categories: \n{categories_dict} ")
     error_msg = "Invalid category"
@@ -76,7 +71,8 @@ def get_date() -> str:
     today = datetime.now().strftime(DATE_FORMAT)
     while 1:
         try:
-            value = input(f"Date (format YYYYMMDD). Default is today ({today}): ")
+            value = input(
+                f"Date (format YYYYMMDD). Default is today ({today}): ")
             if not value:
                 return today
             valid = get_correct_date(value)
@@ -98,18 +94,20 @@ def add_expense():
 
 def show_expenses():
     content = read()[1:]
-    records = tabulate(content,headers=HEADER,tablefmt="fancy_grid",showindex="always")
+    records = tabulate(content, headers=HEADER,
+                       tablefmt="fancy_grid", showindex="always")
     print(records)
-    
+
     total_amount = sum([float(i[1]) for i in content])
     quantity = len(content)
-    summary = tabulate([[total_amount,quantity]],headers=["TOTAL AMOUNT","QUANTITY"],tablefmt="fancy_grid")
+    summary = tabulate([[total_amount, quantity]], headers=[
+                       "TOTAL AMOUNT", "QUANTITY"], tablefmt="fancy_grid")
     print(summary)
 
 
 choices = {
     0: [add_expense, "New expense"],
-    1: [show_expenses,"Show expenses"]
+    1: [show_expenses, "Show expenses"]
 }
 
 
